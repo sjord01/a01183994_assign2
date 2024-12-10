@@ -39,10 +39,10 @@
 	    <scope>provided</scope>
 	</dependency>
 	<dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-      <version>12.8.0.jre8</version> <!-- Use the appropriate version for your JRE -->
-    </dependency>
+	    <groupId>com.microsoft.sqlserver</groupId>
+	    <artifactId>mssql-jdbc</artifactId>
+	    <version>9.4.1.jre8</version> <!-- Use the latest version -->
+	</dependency>
 	<dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>jstl</artifactId>

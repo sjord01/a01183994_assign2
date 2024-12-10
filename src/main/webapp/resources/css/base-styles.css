@@ -50,6 +50,26 @@ body {
 }
 
 @font-face {
+  font-family: 'Poppins-Bold';
+  src: url('../assets/fonts/Poppins-Bold.woff2') format('woff2'),
+       url('../assets/fonts/Poppins-Bold.woff') format('woff'),
+       url('../assets/fonts/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins-Black';
+  src: url('../assets/fonts/Poppins-Black.woff2') format('woff2'),
+       url('../assets/fonts/Poppins-Black.woff') format('woff'),
+       url('../assets/fonts/Poppins-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
     font-family: 'NyghtSerif-Bold';
     src: url('../assets/fonts/NyghtSerif-Bold.woff2') format('woff2'),
          url('../assets/fonts/NyghtSerif-Bold.woff') format('woff'),

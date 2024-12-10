@@ -1,5 +1,7 @@
 package a01183994.database.util;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 /**
@@ -13,6 +15,7 @@ import java.util.regex.Pattern;
 public class Validator {
 
 	private static final Pattern BCIT_ID_PATTERN = Pattern.compile("^A0\\d{7}$");
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+(?: [A-Za-z]+)*$");
 	
     /**
      * Validates that the given string is not null, empty, or only whitespace.
@@ -44,6 +47,50 @@ public class Validator {
             throw new ApplicationException("Invalid BCIT ID format. Must start with 'A0' followed by 7 digits.");
         }
         return trimmedId;
+    }
+    
+    public static boolean isAgeValid(LocalDate dob) {
+        if (dob == null) {
+            return false;
+        }
+        LocalDate today = LocalDate.now();
+        Period age = Period.between(dob, today);
+        return age.getYears() >= 18;
+    }
+
+    /**
+     * Validates that the name starts with a letter, allows spaces (one per word),
+     * and contains only letters.
+     *
+     * @param name The input name to validate.
+     * @return True if valid, false otherwise.
+     */
+    public static boolean isValidName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        // Trim the input and validate against the pattern
+        return NAME_PATTERN.matcher(name.trim()).matches();
+    }
+
+    /**
+     * Formats a name to capitalize the first letter of each word and make the rest lowercase.
+     *
+     * @param name The input name to format.
+     * @return The formatted name.
+     */
+    public static String formatName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return name;
+        }
+        String[] words = name.trim().split("\\s+");
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            formattedName.append(Character.toUpperCase(word.charAt(0)))
+                         .append(word.substring(1).toLowerCase())
+                         .append(" ");
+        }
+        return formattedName.toString().trim();
     }
    
 }

@@ -82,8 +82,8 @@ public class EmployeeDao extends Dao<Employee> {
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             
             stmt.setString(1, employee.getId());
-            stmt.setString(2, employee.getFirstName());
-            stmt.setString(3, employee.getLastName());
+            stmt.setString(2, Validator.formatName(employee.getFirstName()));
+            stmt.setString(3, Validator.formatName(employee.getLastName()));
             stmt.setDate(4, java.sql.Date.valueOf(employee.getDateOfBirth()));
             
             stmt.executeUpdate();
@@ -103,6 +103,10 @@ public class EmployeeDao extends Dao<Employee> {
             Validator.validateId(employee.getId());
             Validator.validateString(employee.getFirstName());
             Validator.validateString(employee.getLastName());
+            
+            if (!Validator.isAgeValid(employee.getDateOfBirth())) {
+                return ErrorCode.INVALID_DATA; // Return an error code for invalid age
+            }
       
             // Check for duplicate ID
             String query = String.format("SELECT COUNT(*) FROM %s WHERE ID = ?", tableName);

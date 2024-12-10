@@ -321,6 +321,10 @@ form button {
     border-radius: 4px;
 }
 
+.error-contents {
+	margin-top: 2rem;
+}
+
 .success {
 	background-color: var(--light-blue-02);
     border: 1px solid var(--blue-01);

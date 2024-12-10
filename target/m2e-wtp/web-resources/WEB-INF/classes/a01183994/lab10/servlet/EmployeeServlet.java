@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import a01183994.data.Employee;
 import a01183994.data.service.EmployeeService;
 import a01183994.database.util.ErrorCode;
+import a01183994.database.util.Validator;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ import java.util.List;
 public class EmployeeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private EmployeeService employeeController;
+    private EmployeeService employeeService;
 
     @Override
     public void init() throws ServletException {
@@ -57,7 +58,7 @@ public class EmployeeServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String deleteId = request.getParameter("deleteId");
-            ErrorCode result = employeeController.deleteEmployee(deleteId);
+            ErrorCode result = employeeService.deleteEmployee(deleteId);
 
             // Set delete result attributes
             request.setAttribute("deleteResultCode", result.getCode());
@@ -70,7 +71,7 @@ public class EmployeeServlet extends HttpServlet {
 
         // Always fetch employees list for display
         try {
-            List<Employee> employees = employeeController.getEmployees();
+            List<Employee> employees = employeeService.getEmployees();
             request.setAttribute("employees", employees);
         } catch (Exception ex) {
             request.setAttribute("error", "Error getting the list of employees");
@@ -86,14 +87,31 @@ public class EmployeeServlet extends HttpServlet {
     private void handleAdd(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
-            String id = request.getParameter("id");
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
+        	String id = request.getParameter("id");
+            String firstName = request.getParameter("firstName").trim(); // Trim leading/trailing spaces
+            String lastName = request.getParameter("lastName").trim();   // Trim leading/trailing spaces
             LocalDate dob = LocalDate.parse(request.getParameter("dob"));
 
+            // Format names
+            firstName = Validator.formatName(firstName);
+            lastName = Validator.formatName(lastName);
+
+            // Validate First Name
+            if (!Validator.isValidName(firstName)) {
+                request.getSession().setAttribute("firstNameError", "First Name must start with a letter and have only one space between words.");
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
+            }
+
+            // Validate Last Name
+            if (!Validator.isValidName(lastName)) {
+                request.getSession().setAttribute("lastNameError", "Last Name must start with a letter and have only one space between words.");
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
+            }
             Employee employee = new Employee(id, firstName, lastName, dob);
 
-            ErrorCode result = employeeController.validateAndAddEmployee(employee);
+            ErrorCode result = employeeService.validateAndAddEmployee(employee);
 
             // Store result in session
             storeSessionAttributes(request, "resultCode", result.getCode(), "resultDescription",
@@ -101,6 +119,8 @@ public class EmployeeServlet extends HttpServlet {
 
             if (result == ErrorCode.SUCCESS_ADD) {
                 request.getSession().setAttribute("success", true);
+            } else if (result == ErrorCode.INVALID_DATA) { // Check for invalid data (age)
+                request.getSession().setAttribute("ageError", "Employee must be at least 18 years old.");
             }
 
         } catch (Exception e) {
@@ -128,7 +148,7 @@ public class EmployeeServlet extends HttpServlet {
 
         // Fetch and set all employees
         try {
-            List<Employee> employees = employeeController.getEmployees();
+            List<Employee> employees = employeeService.getEmployees();
             req.setAttribute("employees", employees);
         } catch (Exception e) {
             req.setAttribute("error", "Error fetching employees.");
@@ -146,7 +166,7 @@ public class EmployeeServlet extends HttpServlet {
      */
     private void handleSearch(HttpServletRequest req, String searchId) {
         try {
-            Employee employee = employeeController.findEmployee(searchId.toUpperCase());
+            Employee employee = employeeService.findEmployee(searchId.toUpperCase());
             if (employee != null) {
                 req.setAttribute("searchResult",
                         employee.getFirstName() + " " + employee.getLastName());
@@ -168,7 +188,7 @@ public class EmployeeServlet extends HttpServlet {
     private void createConnection(String url, String username, String password) {
         System.out.println("Connecting to the database...");
         try {
-            employeeController = new EmployeeService(url, username, password);
+        	employeeService = new EmployeeService(url, username, password);
         } catch (IOException | SQLException e) {
             System.out.println("Error connecting to the database: " + e.getMessage());
             throw new RuntimeException(e); // Fail fast if connection cannot be established

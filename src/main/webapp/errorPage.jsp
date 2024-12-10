@@ -17,10 +17,10 @@
      <main>
 		<section>
 		    <div>
-		        <h2>""All that is gold does not glitter, not all those who wander are lost."</h2>
+		        <h2>"All that is gold does not glitter, not all those who wander are lost."</h2>
 		        <p>We encountered an unexpected issue while processing your request. Please try again later.</p>
 		        
-		        <div>
+		        <div class="error-contents">
                     <h3>Error Details:</h3>
                     <p><span class="txt-red">Status Code:</span> ${pageContext.errorData.statusCode}</p>
                     <p><span class="txt-red">Request URI:</span> ${pageContext.errorData.requestURI}</p>

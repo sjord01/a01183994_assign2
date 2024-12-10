@@ -33,4 +33,24 @@
             Code: ${resultCode} - ${resultDescription}
         </div>
     </c:if>
+    
+    <!-- Display age validation error -->
+    <c:if test="${not empty sessionScope.ageError}">
+        <div class="message error">
+            ${sessionScope.ageError}
+            <c:remove var="ageError" scope="session"/>
+        </div>
+    </c:if>
+    
+    <!-- Display First Name error -->
+    <c:if test="${not empty sessionScope.firstNameError}">
+        <div class="message error">${sessionScope.firstNameError}</div>
+        <c:remove var="firstNameError" scope="session"/>
+    </c:if>
+    
+    <!-- Display Last Name error -->
+    <c:if test="${not empty sessionScope.lastNameError}">
+        <div class="message error">${sessionScope.lastNameError}</div>
+        <c:remove var="lastNameError" scope="session"/>
+    </c:if>
 </section>
